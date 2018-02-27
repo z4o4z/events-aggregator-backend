@@ -1,0 +1,56 @@
+{
+  "name": "@monterosa/simple-ws-starter-kit",
+  "version": "0.0.1",
+  "description": "Starter kit for the simple web services",
+  "keywords": ["monterosa", "starterkit", "node", "koa", "koa2", "mysql", "redis"],
+  "author": {
+    "name": "Evgeny Zaitsev (Monterosa Productions Ltd)",
+    "email": "hello@monterosa.co",
+    "url": "http://monterosa.co/"
+  },
+  "license": "MIT",
+  "main": "app.js",
+  "engines": {
+    "node": ">8.0.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "colors": "^1.1.2",
+    "db-migrate": "^0.10.2",
+    "db-migrate-mysql": "^1.1.10",
+    "dotenv": "^4.0.0",
+    "koa": "^2.4.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-helmet": "^3.3.0",
+    "koa-router": "^7.3.0",
+    "koa-validate": "^1.0.7",
+    "mysql": "^2.15.0",
+    "redis": "^2.8.0",
+    "winston": "^3.0.0-rc1"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-prettier": "^2.5.0",
+    "eslint-plugin-security": "^1.4.0",
+    "faker": "^4.1.0",
+    "nyc": "^11.4.1",
+    "prettier": "^1.10.2",
+    "sinon": "^4.2.2"
+  },
+  "scripts": {
+    "lint": "eslint ./*.js ./**/*.js",
+    "test": "NODE_ENV=test nyc ava",
+    "start": "node app.js",
+    "format": "prettier-eslint --write ./*.js ./**/*.js",
+    "migrate": "db-migrate up",
+    "test:report": "nyc report --reporter=html"
+  },
+  "ava": {
+    "files": ["**/*.spec.js"],
+    "source": ["**/*.js"]
+  }
+}
