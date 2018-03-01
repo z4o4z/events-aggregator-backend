@@ -8,6 +8,7 @@
 const sinon = require('sinon');
 const faker = require('faker');
 const mysql = require('mysql');
+const Promise = require('bluebird');
 const EventEmitter = require('events');
 
 process.env.DB_HOST = faker.internet.ip();
@@ -15,77 +16,54 @@ process.env.DB_PORT = faker.random.number({ min: 100, max: 9999 });
 process.env.DB_USER = faker.lorem.slug();
 process.env.DB_PASS = faker.internet.password();
 process.env.DB_NAME = faker.lorem.slug();
+process.env.DB_CONNECTION_LIMIT = faker.random.number({ min: 0, max: 100 });
 
-function getFatalError() {
-  const error = new Error('fatal error');
-  error.fatal = true;
-
-  return error;
-}
-
-class SuccessConnecttion extends EventEmitter {
-  connect(cb) {
-    cb();
+class Pool extends EventEmitter {
+  getConnection(cb) {
+    cb(null, new EventEmitter());
   }
 
-  query(data, cb) {
-    cb();
-  }
-  commit(cb) {
-    cb();
-  }
-  destroy() {}
-  rollback(cb) {
-    cb();
-  }
-  beginTransaction(cb) {
+  end(cb) {
     cb();
   }
 }
 
-class FailConnecttion extends SuccessConnecttion {
-  connect(cb) {
-    cb(getFatalError());
+class FatalPull extends Pool {
+  getConnection(cb) {
+    cb(new Error('fatal error'), new EventEmitter());
   }
 }
 
-function getFailConnection() {
-  return new FailConnecttion();
-}
+const pool = new Pool();
+const fatalPool = new FatalPull();
 
-function getSuccessConnection() {
-  return new SuccessConnecttion();
+Promise.promisifyAll(pool);
+Promise.promisifyAll(fatalPool);
+
+function stub() {
+  const createPool = sinon.stub(mysql, 'createPool');
+
+  createPool.returns(pool);
 }
 
 function spy() {
-  const createConnection = sinon.stub(mysql, 'createConnection');
-  const connection = getSuccessConnection();
-
-  createConnection.returns(connection);
-
-  sinon.spy(connection, 'query');
-  sinon.spy(connection, 'commit');
-  sinon.spy(connection, 'destroy');
-  sinon.spy(connection, 'rollback');
-  sinon.spy(connection, 'beginTransaction');
-
-  return connection;
+  sinon.spy(pool, 'end');
+  sinon.spy(pool, 'getConnection');
 }
 
-function restoreSpy(connection) {
-  connection.query.restore();
-  connection.commit.restore();
-  connection.destroy.restore();
-  connection.rollback.restore();
-  connection.beginTransaction.restore();
+function restoreSpy() {
+  pool.end.restore();
+  pool.getConnection.restore();
+}
 
-  mysql.createConnection.restore();
+function restoreStub() {
+  mysql.createPool.restore();
 }
 
 module.exports = {
   spy,
+  stub,
+  fatalPool,
   restoreSpy,
-  getFatalError,
-  getFailConnection,
-  getSuccessConnection
+  restoreStub
 };

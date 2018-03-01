@@ -3,7 +3,7 @@
 Starter kit for the simple web services powered by [Monterosa](https://www.monterosa.co/).
 
 * Based on the [Koa2]()
-* Has a promisifyed MySQL lib with reconnection feature
+* Has a promisifyed MySQL lib with pool of connections
 * Has a promisifyed Redis lib with reconnection feature
 * Has MySQL migrations
 * Has tests with AVA, NYC, Sinon and Faker
@@ -41,6 +41,8 @@ DB_PORT=<%= @mysql_service_port %>
 DB_USER=<%= @mysql_service_usr %>
 DB_PASS=<%= @mysql_service_password %>
 DB_NAME=<%= @mysql_service_database %>
+# the limit of connections in the pool
+DB_CONNECTION_LIMIT=<%= @mysql_connection_limit %>
 
 # redis config
 REDIS_DB=<%= @redis_db %>
@@ -125,28 +127,26 @@ logger.info('App started successfully on the port %s', process.env.HTTP_PORT); /
 ### MySQL lib
 
 To connect to the MySQL server we are using [MySQL driver](https://github.com/mysqljs/mysql).
-To access MySQL instance from the routes you can use koa's context. Example:
+To access MySQL connection instance from the routes you can use koa's state. Example:
 
 ```
-const now = await ctx.db.query('SELECT NOW()');
+const now = await ctx.state.db.query('SELECT NOW()');
 ```
 
-Also, you can include the MySQL instance to you file manually just add the following line:
+Also, you can get new MySQL connection instance from the pool. Example:
 
 ```
 const mysql = require('./libs/mysql');
-```
 
-The MySQL lib has auto-reconnection feature. The library will try to reconnect with increasing timeout, the maximum timeout is 15 seconds.
+/* .... */
+
+const db = await mysql.getConnection();
+```
 
 #### MySQL lib API
 
-* `.connect` - returns Promise
-* `.disconnect`
-* `.query` - returns Promise
-* `.startTransaction` - returns Promise
-* `.rollbackTransaction` - returns Promise
-* `.endTransaction` - returns Promise
+* `.getConnection` - gets new promisifyed connection instance(you can use `.queryAsync` instead of `.query`), returns Promise
+* `.end` - closes all connections, returns Promise
 
 ### MySQL migrations
 
