@@ -7,7 +7,7 @@ const logger = require('../helpers/get-logger')(__filename);
 const router = new Router();
 
 async function get(ctx) {
-  const { db, privateUUID } = ctx.state;
+  const { privateUUID } = ctx.state;
 
   if (privateUUID !== process.env.HEALTH_UUID) {
     return;
@@ -15,29 +15,10 @@ async function get(ctx) {
 
   logger.info('get');
 
-  let status = HEALTH_STATUSES.OK;
-  let mysqlTime;
-  let redisPing;
-
-  try {
-    [{ mysqlTime }] = await db.queryAsync('SELECT NOW() as mysqlTime');
-  } catch (error) {
-    logger.warn('get - error=%j', error);
-  }
-
-  try {
-    redisPing = await ctx.redis.ping();
-  } catch (error) {
-    logger.warn('get - error=%j', error);
-  }
-
-  if (!mysqlTime || !redisPing) {
-    status = HEALTH_STATUSES.FAIL;
-  }
+  const status = HEALTH_STATUSES.OK;
 
   ctx.body = {
-    status,
-    mysql_time: mysqlTime
+    status
   };
 }
 

@@ -1,11 +1,8 @@
-# @monterosa/simple-ws-starter-kit
+# events-aggregator-backend
 
 Starter kit for the simple web services powered by [Monterosa](https://www.monterosa.co/).
 
 * Based on the [Koa2]()
-* Has a promisifyed MySQL lib with pool of connections
-* Has a promisifyed Redis lib with reconnection feature
-* Has MySQL migrations
 * Has tests with AVA, NYC, Sinon and Faker
 * Has `.env` file for the environment specific settings
 * Has ESLint and Prettier integration
@@ -13,21 +10,28 @@ Starter kit for the simple web services powered by [Monterosa](https://www.monte
 * Has the private `/:privateUUID/health` and `/:privateUUID/version` routes
 * Has a middleware to validate the errors in the one place
 * Has a pretty logger with date time, file path and colors
-* Has `.gitlab-ci.yml` file for the continuous-integration features (lint and test)
 
 ## Installation
 
 Just clone the repository:
 
 ```
-git clone git@github.com:monterosalondon/simple-ws-starter-kit.git
+git clone git@github.com:z4o4z/events-aggregator-backend
+```
+
+## Start
+
+Just run the folowing command:
+
+```
+node ./app.js
 ```
 
 ## Usage
 
 ### `.env` and `.env.erb` files
 
-The service uses `.env` file for the environment specific settings(HTTP port, MySQL pass, MySQL username and etc).
+The service uses `.env` file for the environment specific settings(HTTP port, MongoDB pass, MongoDB username and etc).
 We are using [dotenv](https://www.npmjs.com/package/dotenv) lib to move variables from `.env` file to the `process.env`.
 `.env` file added to `.gitignore` to be sure not putting private data into the repository.
 `.env.erb` this is template file for the developers and DevOps team to generate `.env` file with the right keys.
@@ -36,18 +40,9 @@ We are using [dotenv](https://www.npmjs.com/package/dotenv) lib to move variable
 
 ```
 # mysql config
-DB_HOST=<%= @mysql_host %>
-DB_PORT=<%= @mysql_service_port %>
-DB_USER=<%= @mysql_service_usr %>
-DB_PASS=<%= @mysql_service_password %>
-DB_NAME=<%= @mysql_service_database %>
-# the limit of connections in the pool
-DB_CONNECTION_LIMIT=<%= @mysql_connection_limit %>
-
-# redis config
-REDIS_DB=<%= @redis_db %>
-REDIS_HOST=<%= @redis_host %>
-REDIS_PORT=<%= @redis_service_port %>
+MONGO_DB_HOST=<%= @mongodb_host %>
+MONGO_DB_PORT=<%= @mongodb_service_port %>
+MONGO_DB_NAME=<%= @mongodb_service_user_name %>
 
 # uuid for the private routes
 HEALTH_UUID=<%= @health_uuid %>
@@ -79,10 +74,6 @@ To run prettier use the following command:
 ```
 npm run format
 ```
-
-### `.gitlab-ci.yml` file
-
-The `.gitlab-ci.yml` contain default stages for installing, linting and testing code on the CI. Also, it supports caching `node_modules` folder.
 
 ### Tests
 
@@ -124,70 +115,11 @@ logger.info('App started successfully on the port %s', process.env.HTTP_PORT); /
 * `.debug` - grey color
 * `.info` - green color
 
-### MySQL lib
-
-To connect to the MySQL server we are using [MySQL driver](https://github.com/mysqljs/mysql).
-To access MySQL connection instance from the routes you can use koa's state. Example:
-
-```
-const now = await ctx.state.db.query('SELECT NOW()');
-```
-
-Also, you can get new MySQL connection instance from the pool. Example:
-
-```
-const mysql = require('./libs/mysql');
-
-/* .... */
-
-const db = await mysql.getConnection();
-```
-
-#### MySQL lib API
-
-* `.getConnection` - gets new promisifyed connection instance(you can use `.queryAsync` instead of `.query`), returns Promise
-* `.end` - closes all connections, returns Promise
-
-### MySQL migrations
-
-For MySQL migrations we are using [db-migrate](https://db-migrate.readthedocs.io/en/latest/) lib. To start migrations just run the following command:
-
-```
-npm run migrate
-```
-
-By default this command will create 2 tables: `settings` and `users` with only one column `id`.
-To change migrations just edit `/migrations/20180123075846-init.js` file or you can create the other files with the following command `db-migrate create filename`.
-
-##### NOTE: Please read the [db-migrate](https://db-migrate.readthedocs.io/en/latest/) doc!
-
-### Redis lib
-
-To connect to the Redis server we are using [Redis driver](https://github.com/NodeRedis/node_redis).
-To access Redis instance from the routes you can use koa's context. Example:
-
-```
-const redisPing = await ctx.redis.ping();
-```
-
-Also, you can include the MySQL instance to you file manually just add the following line:
-
-```
-const redis = require('./libs/redis');
-```
-
-The Redis lib has auto-reconnection feature. The library will try to reconnect with increasing timeout, the maximum timeout is 15 seconds.
-
-#### Redis lib API
-
-* `.ping` - returns Promise
-* `.client` - promisifyed redis client instance, all operations(`.hgetallAsync`, `.scardAsync`, `.delAsync`) must called from here
-
 ### Routes
 
 For routing we using [koa-router](https://github.com/alexmingoia/koa-router) and for validation [koa-validate](https://github.com/RocksonZeta/koa-validate) libs. All routes placed in the `/controllers` folder and the main router is `/router.js`.
 
-By default router has two private routes:
+The router has two private routes:
 
 * `/:privateUUID/health` - the health information for this service
 * `/:privateUUID/version` - the current version of the service

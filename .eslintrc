@@ -3,6 +3,7 @@
   "rules": {
     "arrow-parens": 0,
     "comma-dangle": 0,
+    "function-paren-newline": 0,
     "prettier/prettier": [
       "error",
       {
@@ -10,6 +11,7 @@
         "printWidth": 100
       }
     ],
+    "no-await-in-loop": 0,
     "no-confusing-arrow": 0,
     "no-underscore-dangle": 0,
     "object-curly-newline": ["error", { "consistent": true }]

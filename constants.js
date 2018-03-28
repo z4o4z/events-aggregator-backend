@@ -1,3 +1,7 @@
+exports.EVENTS_ENDPOINTS = {
+  DEV_BY: 'https://events.dev.by'
+};
+
 exports.HEALTH_STATUSES = {
   OK: 'ok',
   FAIL: 'fail'
