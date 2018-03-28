@@ -9,9 +9,17 @@ const logger = require('./helpers/get-logger')(__filename);
 
 const errors = require('./middlewares/errors');
 
+const MongoDB = require('./libs/mongo-db');
+
 const router = require('./router');
 
 const app = new Koa();
+
+const db = new MongoDB({
+  port: process.env.MONGO_DB_PORT,
+  host: process.env.MONGO_DB_HOST,
+  name: process.env.MONGO_DB_NAME
+});
 
 app.env = process.env.NODE_ENV;
 
@@ -25,6 +33,8 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 async function main() {
+  await db.connect();
+
   app.listen(process.env.HTTP_PORT);
   logger.info('App started successfully on the port %s', process.env.HTTP_PORT);
 }

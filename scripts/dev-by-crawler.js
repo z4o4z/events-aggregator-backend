@@ -165,7 +165,7 @@ class DevByCrawler extends Crawler {
 
     const dateTimeRow = Crawler.getTextFromNode(dateTimeNode);
 
-    const [, startDate, startMonth, finishDate, finishMonth, startTime, finishTime] =
+    const [, startDate, startMonth, finishDate = startDate, finishMonth, startTime, finishTime] =
       dateTimeRow.match(
         /^(?:[а-яА-Я]+,\s+)?([0-9]+)(?:\s+([а-яА-Я]+))?(?:\s+—\s+([0-9]+)\s+([а-яА-Я]+))?(?:\s+([0-9:]+))?(?:\s+-\s+([0-9:]+))?/
       ) || [];
