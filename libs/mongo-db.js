@@ -22,22 +22,19 @@ class MongoDB {
       this.reconections = 0;
     });
 
-    this.connection.on('error', error => {
+    this.connection.on('error', async error => {
       logger.error(`Error in MongoDb connection: ${error}`);
 
       this.reconections += 1;
 
-      if (this.reconections === MAX_RECONECTIONS) {
+      if (!this.config.autoReconnect) {
+        throw error;
+      } else if (this.reconections === MAX_RECONECTIONS) {
         throw new Error('max reconnections reached');
       } else {
-        mongoose.disconnect();
+        await this.disconnect();
+        await this.connect();
       }
-    });
-
-    this.connection.on('disconnected', () => {
-      logger.info('MongoDB disconnected!');
-
-      this._connect();
     });
   }
 

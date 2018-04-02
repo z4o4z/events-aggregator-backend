@@ -2,15 +2,7 @@
   "name": "events-aggregator-backend",
   "version": "0.0.1",
   "description": "Events aggregator backend",
-  "keywords": [
-    "events",
-    "aggregator",
-    "node",
-    "koa",
-    "koa2",
-    "mongodb",
-    "redis"
-  ],
+  "keywords": ["events", "aggregator", "node", "koa", "koa2", "mongodb", "redis"],
   "author": {
     "name": "Evgeny Zaitsev",
     "email": "overhawlin@gmail.com"
@@ -52,15 +44,13 @@
     "lint": "eslint . --ext .js",
     "test": "NODE_ENV=test nyc ava",
     "start": "node app.js",
+    "start:docker": "npm run start:crawler:devby && pm2-docker start process.json",
+    "start:crawler:devby": "node ./scripts/dev-by-crawler.js",
     "format": "prettier-eslint --write ./*.js ./**/*.js",
     "test:report": "nyc report --reporter=html"
   },
   "ava": {
-    "files": [
-      "**/*.spec.js"
-    ],
-    "source": [
-      "**/*.js"
-    ]
+    "files": ["**/*.spec.js"],
+    "source": ["**/*.js"]
   }
 }

@@ -1,0 +1,30 @@
+version: "3.6"
+services:
+  web:
+    build: .
+
+    expose:
+      - "${HTTP_PORT}"
+
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+
+    volumes:
+      - .:/usr/src/app
+
+    links:
+      - mongo
+
+    depends_on:
+      - mongo
+
+
+  mongo:
+    image: mongo
+
+    command: "mongod --port ${MONGO_DB_PORT}"
+
+    ports:
+      - "${MONGO_DB_PORT}:${MONGO_DB_PORT}"
+
+

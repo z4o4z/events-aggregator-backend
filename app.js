@@ -18,7 +18,8 @@ const app = new Koa();
 const db = new MongoDB({
   port: process.env.MONGO_DB_PORT,
   host: process.env.MONGO_DB_HOST,
-  name: process.env.MONGO_DB_NAME
+  name: process.env.MONGO_DB_NAME,
+  autoReconnect: true
 });
 
 app.env = process.env.NODE_ENV;

@@ -18,7 +18,7 @@ async function get(ctx) {
 
   const events = await Event.find(
     {},
-    '_id uri title address start_time start_date finish_time finish_date',
+    '_id uri title address start_time start_date finish_time finish_date hero_image_url',
     {
       skip: page * LIMIT,
       sort: { start_at: -1, start_time: -1 },
@@ -28,7 +28,12 @@ async function get(ctx) {
 
   logger.info('get - page=%s', page);
 
-  ctx.body = events;
+  ctx.body = events.map((event, i) => {
+    // eslint-disable-next-line no-param-reassign
+    event.hero_image_url = `${event.hero_image_url}?${i}`;
+
+    return event;
+  });
 }
 
 async function getById(ctx) {

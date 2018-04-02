@@ -177,6 +177,13 @@ class DevByCrawler extends Crawler {
 
     logger.info('saving event %s', event.title);
 
+    const momentStartDate = moment(`${startDate} ${startMonth || finishMonth}`, 'D MMMM YYYY');
+    const momentFinishDate = moment(`${finishDate} ${finishMonth || startMonth}`, 'D MMMM YYYY');
+
+    if (!momentStartDate.isValid() || !momentFinishDate.isValid()) {
+      return;
+    }
+
     const eventModel = new Event({
       uri: event.uri,
       geo,
@@ -191,9 +198,10 @@ class DevByCrawler extends Crawler {
       organizer: event.organizer,
       start_time: startTime,
       finish_time: finishTime,
-      start_date: moment(`${startDate} ${startMonth || finishMonth}`, 'D MMMM YYYY'),
-      finish_date: moment(`${finishDate} ${finishMonth || startMonth}`, 'D MMMM YYYY'),
-      phone_number: phoneNumber
+      start_date: momentStartDate,
+      finish_date: momentFinishDate,
+      phone_number: phoneNumber,
+      hero_image_url: `https://picsum.photos/600/400?uri=${event.uri}`
     });
 
     await eventModel.save();
@@ -216,6 +224,8 @@ async function main() {
 
   try {
     await db.connect();
+
+    await Event.remove({});
 
     await devByCrawler.processAllPages();
   } catch (err) {
