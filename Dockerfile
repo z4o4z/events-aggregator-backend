@@ -16,10 +16,7 @@ RUN npm i --production
 
 COPY . ./
 
-ARG EXPOSE_PORT
-ENV HTTP_PORT=$EXPOSE_PORT
-
-EXPOSE ${EXPOSE_PORT:-8080}
+EXPOSE ${HTTP_PORT:-8080}
 
 CMD ["pm2-runtime", "start", "pm2.json"]
 
