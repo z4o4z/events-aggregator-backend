@@ -44,7 +44,7 @@ async function get(ctx) {
     '_id uri title address start_time start_date finish_time finish_date hero_image_url',
     {
       skip: page * LIMIT,
-      sort: { start_date: -1, start_time: -1 },
+      sort: { start_date: 1, start_time: -1 },
       limit: LIMIT
     }
   );
