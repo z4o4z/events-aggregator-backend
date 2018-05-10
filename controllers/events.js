@@ -13,11 +13,28 @@ async function get(ctx) {
     .checkQuery('page')
     .default(0)
     .toInt().value;
+  const search = ctx.checkQuery('search').default('').value;
+  const startDate = ctx.checkQuery('startDate').toInt().value;
+  const finishDate = ctx.checkQuery('finishDate').toInt().value;
 
   ctx.assert(!ctx.errors);
 
+  const query = {};
+
+  if (search) {
+    query.$text = { $search: search };
+  }
+
+  if (startDate) {
+    query.start_date = { $gte: startDate };
+  }
+
+  if (finishDate) {
+    query.finish_date = { $lt: finishDate };
+  }
+
   const events = await Event.find(
-    {},
+    query,
     '_id uri title address start_time start_date finish_time finish_date hero_image_url',
     {
       skip: page * LIMIT,
