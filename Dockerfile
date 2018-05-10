@@ -18,7 +18,7 @@ COPY . ./
 
 EXPOSE ${HTTP_PORT:-8080}
 
-CMD ["pm2-runtime", "start", "pm2.json"]
+CMD ["npm", "run", "start:docker"]
 
 USER node
 

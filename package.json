@@ -44,7 +44,7 @@
     "lint": "eslint . --ext .js",
     "test": "NODE_ENV=test nyc ava",
     "start": "node app.js",
-    "start:docker": "npm run start:crawler:devby && pm2-docker start process.json",
+    "start:docker": "npm run start:crawler:devby && pm2-runtime start pm2.json",
     "start:crawler:devby": "node ./scripts/dev-by-crawler.js",
     "format": "prettier-eslint --write ./*.js ./**/*.js",
     "test:report": "nyc report --reporter=html"
