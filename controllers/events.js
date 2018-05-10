@@ -51,12 +51,7 @@ async function get(ctx) {
 
   logger.info('get - page=%s', page);
 
-  ctx.body = events.map((event, i) => {
-    // eslint-disable-next-line no-param-reassign
-    event.hero_image_url = `${event.hero_image_url}?${i}`;
-
-    return event;
-  });
+  ctx.body = events;
 }
 
 async function getById(ctx) {

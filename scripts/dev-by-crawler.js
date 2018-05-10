@@ -51,8 +51,8 @@ class DevByCrawler extends Crawler {
         case 'Место проведения':
           return Object.assign(res, {
             geo: {
-              latitude: h4Node.nextElementSibling.getAttribute('data-latitude'),
-              longitude: h4Node.nextElementSibling.getAttribute('data-longitude')
+              latitude: h4Node.nextElementSibling.getAttribute('data-longitude'),
+              longitude: h4Node.nextElementSibling.getAttribute('data-latitude')
             },
             address: h4Node.nextElementSibling.getAttribute('data-address')
           });
