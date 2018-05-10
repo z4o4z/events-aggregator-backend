@@ -14,8 +14,14 @@ async function get(ctx) {
     .default(0)
     .toInt().value;
   const search = ctx.checkQuery('search').default('').value;
-  const startDate = ctx.checkQuery('startDate').toInt().value;
-  const finishDate = ctx.checkQuery('finishDate').toInt().value;
+  const startDate = ctx
+    .checkQuery('startDate')
+    .optional()
+    .toInt().value;
+  const finishDate = ctx
+    .checkQuery('finishDate')
+    .optional()
+    .toInt().value;
 
   ctx.assert(!ctx.errors);
 
