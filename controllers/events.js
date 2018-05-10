@@ -32,11 +32,11 @@ async function get(ctx) {
   }
 
   if (startDate) {
-    query.start_date = { $gte: startDate };
+    query.start_date = { $gte: new Date(startDate) };
   }
 
   if (finishDate) {
-    query.finish_date = { $lt: finishDate };
+    query.finish_date = { $lt: new Date(finishDate) };
   }
 
   const events = await Event.find(
@@ -44,7 +44,7 @@ async function get(ctx) {
     '_id uri title address start_time start_date finish_time finish_date hero_image_url',
     {
       skip: page * LIMIT,
-      sort: { start_at: -1, start_time: -1 },
+      sort: { start_date: -1, start_time: -1 },
       limit: LIMIT
     }
   );
