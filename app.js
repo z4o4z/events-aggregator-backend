@@ -1,3 +1,5 @@
+/* eslint-disable no-process-exit */
+
 require('./helpers/env');
 
 const Koa = require('koa');
@@ -33,11 +35,31 @@ app.use(bodyParser());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
+async function onStop() {
+  try {
+    await Promise.all([db.disconnect()]);
+
+    logger.info('server successfully stopped');
+
+    process.exit(0);
+  } catch (err) {
+    logger.warn('server stopped with error %s', err);
+
+    process.exit(1);
+  }
+}
+
 async function main() {
+  process.on('SIGINT', onStop);
+
   await db.connect();
 
   app.listen(process.env.HTTP_PORT);
   logger.info('App started successfully on the port %s', process.env.HTTP_PORT);
 }
 
-main();
+main().catch(err => {
+  logger.error("App doesn't started, error: %s", err);
+
+  process.exit(1);
+});

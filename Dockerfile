@@ -1,15 +1,27 @@
-FROM keymetrics/pm2:8-stretch
+FROM node:8-alpine
+
+RUN apk update && apk upgrade && apk add --no-cache bash git openssh
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY package.json /usr/src/app/
-COPY package-lock.json /usr/src/app/
-RUN npm install
-RUN npm install pm2 -g
+COPY package.json package-lock.json ./
 
-COPY . /usr/src/app
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=$PATH:/home/node/.npm-global/bin
+ENV NPM_CONFIG_LOGLEVEL warn
 
-EXPOSE ${HTTP_PORT}
+RUN npm i pm2 -g
+RUN npm i --production
 
-CMD ["npm", "run", "start:docker"]
+COPY . ./
+
+ARG EXPOSE_PORT
+ENV HTTP_PORT=$EXPOSE_PORT
+
+EXPOSE ${EXPOSE_PORT:-8080}
+
+CMD ["pm2-runtime", "start", "pm2.json"]
+
+USER node
+

@@ -4,13 +4,13 @@
       "name": "events-aggregator",
       "script": "app.js",
       "args": [],
-      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "log_date_format": "",
       "watch": true,
       "node_args": "",
       "merge_logs": false,
       "cwd": "./",
       "exec_mode": "cluster",
-      "instances": "1"
+      "instances": "2"
     }
   ]
 }
