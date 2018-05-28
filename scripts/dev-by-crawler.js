@@ -83,7 +83,7 @@ class DevByCrawler extends Crawler {
 
       eventsNodes = [...document.querySelectorAll('.list-item-events .item')];
 
-      const eventsPreviws = await Promise.mapSeries(eventsNodes, event => {
+      const eventsPreviews = await Promise.mapSeries(eventsNodes, event => {
         try {
           return this.transformEventNodeToData(event);
         } catch (e) {
@@ -93,13 +93,11 @@ class DevByCrawler extends Crawler {
         }
       });
 
-      await Promise.each(eventsPreviws, event => {
+      await Promise.each(eventsPreviews, async event => {
         try {
-          return this.fetchAllEventInfoAndSave(event);
+          await this.fetchAllEventInfoAndSave(event);
         } catch (e) {
           logger.warn("can't save event", e);
-
-          return null;
         }
       });
 
@@ -109,7 +107,7 @@ class DevByCrawler extends Crawler {
     logger.info('processing pages done');
   }
 
-  async transformEventNodeToData(event) {
+  transformEventNodeToData(event) {
     logger.debug('transformEvents - event=%j', event);
 
     if (!event) {
