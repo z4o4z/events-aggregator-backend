@@ -9,6 +9,14 @@ const router = new Router();
 
 const LIMIT = 10;
 
+function getEventFromModel(model) {
+  return {
+    ...model.toObject(),
+    start_time: moment(model.start_date).format('HH:mm'),
+    finish_time: moment(model.finish_date).format('HH:mm')
+  };
+}
+
 async function get(ctx) {
   const page = ctx
     .checkQuery('page')
@@ -52,11 +60,7 @@ async function get(ctx) {
 
   logger.info('get - page=%s', page);
 
-  ctx.body = events.map(event => ({
-    ...event,
-    start_time: moment(event.start_date).format('HH:mm'),
-    finish_time: moment(event.finish_date).format('HH:mm')
-  }));
+  ctx.body = events.map(getEventFromModel);
 }
 
 async function getById(ctx) {
@@ -68,7 +72,7 @@ async function getById(ctx) {
 
   logger.info('get - id=%s', id);
 
-  ctx.body = event;
+  ctx.body = getEventFromModel(event);
 }
 
 router.get('/', get).get('/:eventId', getById);
