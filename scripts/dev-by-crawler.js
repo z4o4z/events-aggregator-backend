@@ -184,12 +184,12 @@ class DevByCrawler extends Crawler {
     logger.info('saving event %s', event.title);
 
     const momentStartDate = moment(
-      `+3 ${startTime} ${startDate} ${startMonth || finishMonth}`,
-      'Z HH:mm D MMMM YYYY'
+      `+03:00 ${startTime} ${startDate} ${startMonth || finishMonth}`,
+      'ZZ HH:mm D MMMM YYYY'
     );
     const momentFinishDate = moment(
-      `+3 ${finishTime} ${finishDate} ${finishMonth || startMonth}`,
-      'Z HH:mm D MMMM YYYY'
+      `+03:00 ${finishTime} ${finishDate} ${finishMonth || startMonth}`,
+      'ZZ HH:mm D MMMM YYYY'
     );
 
     if (!momentStartDate.isValid() || !momentFinishDate.isValid()) {
