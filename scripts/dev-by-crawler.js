@@ -165,7 +165,15 @@ class DevByCrawler extends Crawler {
 
     const dateTimeRow = Crawler.getTextFromNode(dateTimeNode);
 
-    const [, startDate, startMonth, finishDate = startDate, finishMonth, startTime, finishTime] =
+    const [
+      ,
+      startDate,
+      startMonth,
+      finishDate = startDate,
+      finishMonth,
+      startTime = '00:00',
+      finishTime = '00:00'
+    ] =
       dateTimeRow.match(
         /^(?:[а-яА-Я]+,\s+)?([0-9]+)(?:\s+([а-яА-Я]+))?(?:\s+—\s+([0-9]+)\s+([а-яА-Я]+))?(?:\s+([0-9:]+))?(?:\s+-\s+([0-9:]+))?/
       ) || [];
@@ -177,8 +185,14 @@ class DevByCrawler extends Crawler {
 
     logger.info('saving event %s', event.title);
 
-    const momentStartDate = moment(`${startDate} ${startMonth || finishMonth}`, 'D MMMM YYYY');
-    const momentFinishDate = moment(`${finishDate} ${finishMonth || startMonth}`, 'D MMMM YYYY');
+    const momentStartDate = moment(
+      `+3 ${startTime} ${startDate} ${startMonth || finishMonth}`,
+      'Z HH:mm D MMMM YYYY'
+    );
+    const momentFinishDate = moment(
+      `+3 ${finishTime} ${finishDate} ${finishMonth || startMonth}`,
+      'Z HH:mm D MMMM YYYY'
+    );
 
     if (!momentStartDate.isValid() || !momentFinishDate.isValid()) {
       return;
@@ -196,8 +210,6 @@ class DevByCrawler extends Crawler {
       content,
       address,
       organizer: event.organizer,
-      start_time: startTime,
-      finish_time: finishTime,
       start_date: momentStartDate,
       finish_date: momentFinishDate,
       phone_number: phoneNumber,

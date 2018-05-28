@@ -14,9 +14,7 @@ const eventSchema = new mongoose.Schema(
     content: { type: String, required: true },
     address: { type: String },
     organizer: { type: String },
-    start_time: { type: String },
     start_date: { type: Date, required: true },
-    finish_time: { type: String },
     finish_date: { type: Date, required: true },
     phone_number: { type: String },
     hero_image_url: { type: String }

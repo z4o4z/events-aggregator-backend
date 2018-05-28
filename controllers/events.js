@@ -1,3 +1,4 @@
+const moment = require('moment');
 const Router = require('koa-router');
 
 const logger = require('../helpers/get-logger')(__filename);
@@ -41,7 +42,7 @@ async function get(ctx) {
 
   const events = await Event.find(
     query,
-    '_id uri title address start_time start_date finish_time finish_date hero_image_url',
+    '_id uri title address start_date finish_date hero_image_url',
     {
       skip: page * LIMIT,
       sort: { start_date: 1, start_time: -1 },
@@ -51,7 +52,11 @@ async function get(ctx) {
 
   logger.info('get - page=%s', page);
 
-  ctx.body = events;
+  ctx.body = events.map(event => ({
+    ...event,
+    start_time: moment(event.start_date).format('HH:mm'),
+    finish_time: moment(event.finish_date).format('HH:mm')
+  }));
 }
 
 async function getById(ctx) {
