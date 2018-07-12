@@ -1,8 +1,16 @@
 {
   "name": "events-aggregator-backend",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Events aggregator backend",
-  "keywords": ["events", "aggregator", "node", "koa", "koa2", "mongodb", "redis"],
+  "keywords": [
+    "events",
+    "aggregator",
+    "node",
+    "koa",
+    "koa2",
+    "mongodb",
+    "redis"
+  ],
   "author": {
     "name": "Evgeny Zaitsev",
     "email": "overhawlin@gmail.com"
@@ -50,7 +58,11 @@
     "test:report": "nyc report --reporter=html"
   },
   "ava": {
-    "files": ["**/*.spec.js"],
-    "source": ["**/*.js"]
+    "files": [
+      "**/*.spec.js"
+    ],
+    "source": [
+      "**/*.js"
+    ]
   }
 }
