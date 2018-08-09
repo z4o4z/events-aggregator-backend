@@ -11,6 +11,7 @@ const logger = require('../helpers/get-logger')(__filename);
 
 const MongoDB = require('../libs/mongo-db');
 
+const Page = require('../models/page');
 const Event = require('../models/event');
 
 const Crawler = require('./crawler');
@@ -79,7 +80,15 @@ class DevByCrawler extends Crawler {
     let eventsNodes = [];
 
     do {
-      const document = await this.getDocumentFromURL(`/?page=${page}`);
+      const dom = await this.getDomFromURL(`/?page=${page}`);
+      const { document } = dom.window;
+
+      const pageModel = new Page({
+        uri: `/?page=${page}`,
+        html: dom.serialize()
+      });
+
+      await pageModel.save();
 
       eventsNodes = [...document.querySelectorAll('.list-item-events .item')];
 
@@ -151,7 +160,15 @@ class DevByCrawler extends Crawler {
     logger.debug('fetchAllEventInfoAndSave - event=%j', event);
     logger.info('fetching event by uri %s', event.uri);
 
-    const document = await this.getDocumentFromURL(event.uri);
+    const dom = await this.getDomFromURL(event.uri);
+    const { document } = dom.window;
+
+    const pageModel = new Page({
+      uri: event.uri,
+      html: dom.serialize()
+    });
+
+    await pageModel.save();
 
     const contentNode = document.querySelector('.body-events__overview .input');
     const content = Crawler.getHTMLFromNode(contentNode);
@@ -235,6 +252,7 @@ async function main() {
   try {
     await db.connect();
 
+    await Page.remove({});
     await Event.remove({});
 
     await devByCrawler.processAllPages();

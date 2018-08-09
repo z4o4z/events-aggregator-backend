@@ -25,12 +25,12 @@ class Crawler {
     this.endpoint = endpoint;
   }
 
-  async getDocumentFromURL(postfix = '') {
+  async getDomFromURL(postfix = '') {
     logger.debug('getDocumentFromURL - postfix=%s', postfix);
 
-    const { window } = await JSDOM.fromURL(`${this.endpoint}${postfix}`);
+    const dom = await JSDOM.fromURL(`${this.endpoint}${postfix}`);
 
-    return window.document;
+    return dom;
   }
 }
 
